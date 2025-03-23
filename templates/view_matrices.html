@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ n }} x {{ n }} Value & Policy Matrices</title>
+    <style>
+        .matrix-container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .grid-wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+        .index-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat({{ n }}, 1fr);
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+        }
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid black;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .obstacle {
+            background-color: grey;
+            color: transparent; /* 隱藏任何文字 */
+        }
+        .axis-labels {
+            display: grid;
+            grid-template-columns: repeat({{ n }}, 1fr);
+            text-align: center;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ n }} x {{ n }} Value & Policy Matrices</h1>
+    <div class="matrix-container">
+        <div>
+            <h2>Value Matrix</h2>
+            <div class="grid-wrapper">
+                <!-- 左側索引 -->
+                <div class="index-column" style="height: 500px;">
+                    {% for i in range(n) %}
+                        <div style="height: calc(500px / {{ n }});">{{ i }}</div>
+                    {% endfor %}
+                </div>
+                <!-- 矩陣 -->
+                <div>
+                    <div class="grid">
+                        {% for i in range(n) %}
+                            {% for j in range(n) %}
+                                {% if value_matrix[i][j] is none %}
+                                    <!-- 障礙物 -->
+                                    <div class="cell obstacle"></div>
+                                {% else %}
+                                    <!-- 顯示數值 -->
+                                    <div class="cell">{{ value_matrix[i][j] }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <!-- 底部索引 -->
+                    <div class="axis-labels">
+                        {% for j in range(n) %}
+                            <div>{{ j }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h2>Policy Matrix</h2>
+            <div class="grid-wrapper">
+                <!-- 左側索引 -->
+                <div class="index-column" style="height: 500px;">
+                    {% for i in range(n) %}
+                        <div style="height: calc(500px / {{ n }});">{{ i }}</div>
+                    {% endfor %}
+                </div>
+                <!-- 矩陣 -->
+                <div>
+                    <div class="grid">
+                        {% for i in range(n) %}
+                            {% for j in range(n) %}
+                                {% if policy_matrix[i][j] == '■' %}
+                                    <!-- 障礙物 -->
+                                    <div class="cell obstacle">{{ policy_matrix[i][j] }}</div>
+                                {% else %}
+                                    <!-- 正常方格 -->
+                                    <div class="cell">{{ policy_matrix[i][j] }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <!-- 底部索引 -->
+                    <div class="axis-labels">
+                        {% for j in range(n) %}
+                            <div>{{ j }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
