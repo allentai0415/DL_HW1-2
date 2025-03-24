@@ -34,9 +34,9 @@
             font-size: 16px;
             font-weight: bold;
         }
+        /* 灰色障礙物格子 */
         .obstacle {
             background-color: grey;
-            color: transparent; /* 隱藏任何文字 */
         }
         .axis-labels {
             display: grid;
@@ -48,33 +48,34 @@
     </style>
 </head>
 <body>
-    <h1>{{ n }} x {{ n }} Value & Policy Matrices</h1>
+    <h1>{{ n }} x {{ n }} Value & Policy Matrices (Iterative Policy Evaluation)</h1>
     <div class="matrix-container">
+        <!-- Value Matrix -->
         <div>
             <h2>Value Matrix</h2>
             <div class="grid-wrapper">
-                <!-- 左側索引 -->
+                <!-- 左側索引 (行) -->
                 <div class="index-column" style="height: 500px;">
                     {% for i in range(n) %}
                         <div style="height: calc(500px / {{ n }});">{{ i }}</div>
                     {% endfor %}
                 </div>
-                <!-- 矩陣 -->
+                <!-- 矩陣本體 -->
                 <div>
                     <div class="grid">
                         {% for i in range(n) %}
                             {% for j in range(n) %}
                                 {% if value_matrix[i][j] is none %}
-                                    <!-- 障礙物 -->
+                                    <!-- 障礙物 => 灰色 -->
                                     <div class="cell obstacle"></div>
                                 {% else %}
-                                    <!-- 顯示數值 -->
+                                    <!-- 一般格子 => 顯示策略評估後的 Value -->
                                     <div class="cell">{{ value_matrix[i][j] }}</div>
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
                     </div>
-                    <!-- 底部索引 -->
+                    <!-- 底部列標題 -->
                     <div class="axis-labels">
                         {% for j in range(n) %}
                             <div>{{ j }}</div>
@@ -83,31 +84,33 @@
                 </div>
             </div>
         </div>
+
+        <!-- Policy Matrix -->
         <div>
             <h2>Policy Matrix</h2>
             <div class="grid-wrapper">
-                <!-- 左側索引 -->
+                <!-- 左側索引 (行) -->
                 <div class="index-column" style="height: 500px;">
                     {% for i in range(n) %}
                         <div style="height: calc(500px / {{ n }});">{{ i }}</div>
                     {% endfor %}
                 </div>
-                <!-- 矩陣 -->
+                <!-- 矩陣本體 -->
                 <div>
                     <div class="grid">
                         {% for i in range(n) %}
                             {% for j in range(n) %}
                                 {% if policy_matrix[i][j] == '■' %}
-                                    <!-- 障礙物 -->
-                                    <div class="cell obstacle">{{ policy_matrix[i][j] }}</div>
+                                    <!-- 障礙物 => 灰色 -->
+                                    <div class="cell obstacle">■</div>
                                 {% else %}
-                                    <!-- 正常方格 -->
+                                    <!-- 一般格子 => 顯示方向符號 (↑, ↓, ←, →) -->
                                     <div class="cell">{{ policy_matrix[i][j] }}</div>
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
                     </div>
-                    <!-- 底部索引 -->
+                    <!-- 底部列標題 -->
                     <div class="axis-labels">
                         {% for j in range(n) %}
                             <div>{{ j }}</div>

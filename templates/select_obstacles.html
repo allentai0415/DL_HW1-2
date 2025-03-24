@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Select Obstacles for {{ n }} x {{ n }} Grid</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat({{ n }}, 1fr);
+            width: 500px;
+            height: 500px;
+            border: 1px solid black;
+        }
+        .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid black;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .obstacle {
+            background-color: grey;
+        }
+    </style>
+    <!-- jQuery for AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let obstacles = new Set();
+            let maxObstacles = {{ n - 2 }};
+
+            $(".cell").click(function() {
+                let row = $(this).data("row");
+                let col = $(this).data("col");
+                let cellId = row + "-" + col;
+
+                // 如果已是障礙物 => 再點一次就取消
+                if (obstacles.has(cellId)) {
+                    obstacles.delete(cellId);
+                    $(this).removeClass("obstacle");
+                } else {
+                    if (obstacles.size < maxObstacles) {
+                        obstacles.add(cellId);
+                        $(this).addClass("obstacle");
+                    } else {
+                        alert("You can only set up to " + maxObstacles + " blocked cells.");
+                    }
+                }
+            });
+
+            $("#submit-obstacles").click(function() {
+                // 把 Set 轉成 2D array
+                let obstacleArray = Array.from(obstacles).map(item => {
+                    let [r, c] = item.split("-");
+                    return [parseInt(r), parseInt(c)];
+                });
+
+                // AJAX POST 到後端
+                $.post("/submit_obstacles", { obstacles: JSON.stringify(obstacleArray) }, function(response) {
+                    if (response.status === "success") {
+                        window.location.href = "/view_matrices";
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Select Obstacles for {{ n }} x {{ n }} Grid</h1>
+    <p>Click on cells to set obstacles (max {{ n - 2 }}). Then submit.</p>
+
+    <div class="grid">
+        {% for i in range(n) %}
+            {% for j in range(n) %}
+                <div class="cell" data-row="{{ i }}" data-col="{{ j }}"></div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <button id="submit-obstacles">Submit Obstacles</button>
+</body>
+</html>
